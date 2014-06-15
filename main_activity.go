@@ -23,6 +23,8 @@ func (activity MainActivity) Start(conneciton *nadeshiko.Connection) {
 		Point{200, 250},
 		Point{300, 300},
 		Point{10, 400},
+		Point{100, 250},
+		Point{400, 150},
 	}
 
 	data := `<svg height="480" width="640">
