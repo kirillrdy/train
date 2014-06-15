@@ -1,7 +1,5 @@
 package main
 
-import "fmt"
-
 type Projection struct {
 	Original    Rectangle
 	Destination Rectangle
@@ -15,12 +13,12 @@ func (projection Projection) Transform(point Point) (tranformed Point) {
 	return tranformed
 }
 
-func main() {
-	scren := Rectangle{Point{0, 0}, Point{640, 480}}
-	fake_world := Rectangle{Point{-10, -10}, Point{10, 10}}
-	projection := Projection{Original: fake_world, Destination: scren}
-
-	want_to_draw_point := Point{-10, -10}
-
-	fmt.Println(projection.Transform(want_to_draw_point))
-}
+//func main() {
+//	scren := Rectangle{Point{0, 0}, Point{640, 480}}
+//	fake_world := Rectangle{Point{-10, -10}, Point{10, 10}}
+//	projection := Projection{Original: fake_world, Destination: scren}
+//
+//	want_to_draw_point := Point{-10, -10}
+//
+//	fmt.Println(projection.Transform(want_to_draw_point))
+//}
