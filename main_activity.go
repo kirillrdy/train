@@ -35,16 +35,24 @@ func (activity MainActivity) Start(conneciton *nadeshiko.Connection) {
 	conneciton.JQuery("body").Append(button)
 
 	conneciton.JQuery("#add").Click(func() {
-		addTrainToPath(path, conneciton)
+		//addTrainToPath(path, conneciton)
+		addAtrain(path, conneciton)
 	})
 
-	go func() {
-		for {
-			addTrainToPath(path, conneciton)
-			time.Sleep(3000 * time.Millisecond)
-		}
-	}()
+	//go func() {
+	//	for {
+	//		addTrainToPath(path, conneciton)
+	//		time.Sleep(3000 * time.Millisecond)
+	//	}
+	//}()
 
+}
+
+func addAtrain(path []Point, conneciton *nadeshiko.Connection) {
+	for i := 0; i < 5; i++ {
+		addTrainToPath(path, conneciton)
+		time.Sleep(120 * time.Millisecond)
+	}
 }
 
 func addTrainToPath(path []Point, conneciton *nadeshiko.Connection) {
@@ -65,6 +73,7 @@ func addTrainToPath(path []Point, conneciton *nadeshiko.Connection) {
 			if train.At(current_target_point) {
 				current_index += 1
 				if current_index == len(path) {
+					train.RemoveFromPage(conneciton)
 					return
 				}
 			}
