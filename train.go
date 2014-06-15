@@ -22,8 +22,12 @@ func (train Train) CssSelector() string {
 }
 
 func (train Train) AppendToPage(conneciton *nadeshiko.Connection) {
-	conneciton.JQuery("body").Append(fmt.Sprintf("<p id='%s'>Hello</p>", train.Id))
+	conneciton.JQuery("body").Append(fmt.Sprintf("<p id='%s'>O</p>", train.Id))
 	conneciton.JQuery(train.CssSelector()).SetCss("position", "absolute")
+}
+
+func (train Train) RemoveFromPage(conneciton *nadeshiko.Connection) {
+	conneciton.JQuery(train.CssSelector()).Remove()
 }
 
 func (train *Train) Step(point Point) {
@@ -40,6 +44,6 @@ func (train Train) At(point Point) bool {
 
 func (train Train) Draw(conneciton *nadeshiko.Connection) {
 	selector := "#" + train.Id
-	conneciton.JQuery(selector).SetCss("left", fmt.Sprintf("%fpx", train.Position.x))
-	conneciton.JQuery(selector).SetCss("top", fmt.Sprintf("%fpx", train.Position.y))
+	conneciton.JQuery(selector).SetCss("left", fmt.Sprintf("%fpx", train.Position.x+2))
+	conneciton.JQuery(selector).SetCss("top", fmt.Sprintf("%fpx", train.Position.y-17))
 }
