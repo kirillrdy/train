@@ -8,6 +8,7 @@ import (
 )
 
 type MainActivity struct {
+	trains []*Train
 }
 
 func (activity MainActivity) Start(conneciton *nadeshiko.Connection) {
@@ -37,9 +38,34 @@ func (activity MainActivity) Start(conneciton *nadeshiko.Connection) {
 	conneciton.JQuery("body").Append(button)
 
 	conneciton.JQuery("#add").Click(func() {
-		//addTrainToPath(path, conneciton)
-		addAtrain(path, conneciton)
+		//activity.addTrainToPath(path, conneciton)
+		activity.addAtrain(path, conneciton)
 	})
+
+	go func() {
+		for {
+			time.Sleep(10 * time.Millisecond)
+			for _, train := range activity.trains {
+				train.OneFrame()
+			}
+
+			for _, train := range activity.trains {
+				train.Draw(conneciton)
+			}
+
+			var non_dead_head []*Train
+
+			for _, train := range activity.trains {
+				if train.ShouldBeRemoved() {
+					//TODO also remove from trains
+					train.RemoveFromPage(conneciton)
+				} else {
+					non_dead_head = append(non_dead_head, train)
+				}
+			}
+			activity.trains = non_dead_head
+		}
+	}()
 
 	//go func() {
 	//	for {
@@ -50,36 +76,17 @@ func (activity MainActivity) Start(conneciton *nadeshiko.Connection) {
 
 }
 
-func addAtrain(path []Point, conneciton *nadeshiko.Connection) {
+func (activity *MainActivity) addAtrain(path []Point, conneciton *nadeshiko.Connection) {
 	for i := 0; i < 5; i++ {
-		addTrainToPath(path, conneciton)
+		activity.addTrainToPath(path, conneciton)
 		time.Sleep(120 * time.Millisecond)
 	}
 }
 
-func addTrainToPath(path []Point, conneciton *nadeshiko.Connection) {
+func (activity *MainActivity) addTrainToPath(path []Point, conneciton *nadeshiko.Connection) {
 
-	train := NewTrain()
+	train := NewTrain(path)
 	train.AppendToPage(conneciton)
-	current_index := 0
+	activity.trains = append(activity.trains, &train)
 
-	go func() {
-		for {
-
-			current_target_point := path[current_index]
-
-			train.Step(current_target_point)
-			train.Draw(conneciton)
-			time.Sleep(10 * time.Millisecond)
-
-			if train.At(current_target_point) {
-				current_index += 1
-				if current_index == len(path) {
-					train.RemoveFromPage(conneciton)
-					return
-				}
-			}
-		}
-
-	}()
 }
