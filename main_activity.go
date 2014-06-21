@@ -81,7 +81,7 @@ func (activity MainActivity) Start(conneciton *nadeshiko.Connection) {
 }
 
 func (activity *MainActivity) addAtrain(path []Point, conneciton *nadeshiko.Connection) {
-	for i := 0; i < 5; i++ {
+	for i := 0; i < 100; i++ {
 		activity.addTrainToPath(path, conneciton)
 		time.Sleep(120 * time.Millisecond)
 	}
