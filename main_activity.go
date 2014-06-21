@@ -49,9 +49,13 @@ func (activity MainActivity) Start(conneciton *nadeshiko.Connection) {
 				train.OneFrame()
 			}
 
+			conneciton.StartBuffer()
+
 			for _, train := range activity.trains {
 				train.Draw(conneciton)
 			}
+
+			conneciton.FlushBuffer()
 
 			var non_dead_head []*Train
 
