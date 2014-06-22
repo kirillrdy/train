@@ -5,7 +5,7 @@ type Projection struct {
 	Destination Rectangle
 }
 
-func (projection Projection) Transform(point Point) (tranformed Point) {
+func (projection Projection) Translate(point Point) (tranformed Point) {
 	//TODO for future perhaps cache something
 	tranformed.x = (point.x-projection.Original.Min.x)/(projection.Original.Max.x-projection.Original.Min.x)*(projection.Destination.Max.x-projection.Destination.Min.x) + projection.Destination.Min.x
 	tranformed.y = (point.y-projection.Original.Min.y)/(projection.Original.Max.y-projection.Original.Min.y)*(projection.Destination.Max.y-projection.Destination.Min.y) + projection.Destination.Min.y

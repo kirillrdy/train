@@ -2,79 +2,84 @@ package main
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/kirillrdy/nadeshiko"
 )
 
 type MainActivity struct {
-	trains []*Train
+	trains     []*Train
+	points     []Point
+	projection Projection
+}
+
+func NewMainActivity() MainActivity {
+
+	scren := Rectangle{Point{0, 0}, Point{1600, 1200}}
+	fake_world := Rectangle{Point{144.5265, -37.6474}, Point{145.6032, -38.1427}}
+	projection := Projection{Original: fake_world, Destination: scren}
+
+	return MainActivity{projection: projection}
+}
+
+func (activity MainActivity) AddMap(conneciton *nadeshiko.Connection) {
+
+	svg_element := `<svg width="1600" height="1200" >
+				%s
+			</svg> `
+
+	var svg_paths []string
+
+	for _, line := range AllTrainLines() {
+		for _, points := range line.route {
+			svg_paths = append(svg_paths, points.Translate(activity.projection).ToSvgPath())
+		}
+	}
+
+	allPaths := fmt.Sprintf(svg_element, strings.Join(svg_paths, "\n"))
+
+	conneciton.JQuery("body").Append(allPaths)
 }
 
 func (activity MainActivity) Start(conneciton *nadeshiko.Connection) {
 
-	path := []Point{
-		Point{0, 0},
-		Point{30, 0},
-		Point{30, 40},
-		Point{200, 70},
-		Point{300, 50},
-		Point{330, 90},
-		Point{160, 200},
-		Point{200, 250},
-		Point{300, 300},
-		Point{10, 400},
-		Point{100, 250},
-		Point{400, 150},
-	}
+	activity.AddMap(conneciton)
 
-	data := `<svg height="480" width="640">
-			<path d="%s" fill="none" stroke="blue"/>
-			</svg> `
+	//button := `<input type="button" id="add" value="Add Train">`
+	//conneciton.JQuery("body").Append(button)
 
-	conneciton.JQuery("body").Append(fmt.Sprintf(data, Points(path).pointsSvgToPath()))
-
-	button := `<input type="button" id="add" value="Add Train">`
-	conneciton.JQuery("body").Append(button)
-
-	conneciton.JQuery("#add").Click(func() {
-		//activity.addTrainToPath(path, conneciton)
-		activity.addAtrain(path, conneciton)
-	})
-
-	go func() {
-		for {
-			time.Sleep(10 * time.Millisecond)
-			for _, train := range activity.trains {
-				train.OneFrame()
-			}
-
-			conneciton.StartBuffer()
-
-			for _, train := range activity.trains {
-				train.Draw(conneciton)
-			}
-
-			conneciton.FlushBuffer()
-
-			var non_dead_head []*Train
-
-			for _, train := range activity.trains {
-				if train.ShouldBeRemoved() {
-					//TODO also remove from trains
-					train.RemoveFromPage(conneciton)
-				} else {
-					non_dead_head = append(non_dead_head, train)
-				}
-			}
-			activity.trains = non_dead_head
-		}
-	}()
+	//conneciton.JQuery("#add").Click(func() {
+	//	limit += 1
+	//	conneciton.JQuery("svg").Remove()
+	//	activity.AddMap(conneciton, limit)
+	//})
 
 	//go func() {
 	//	for {
-	//		addTrainToPath(path, conneciton)
-	//		time.Sleep(3000 * time.Millisecond)
+	//		time.Sleep(10 * time.Millisecond)
+	//		for _, train := range activity.trains {
+	//			train.OneFrame()
+	//		}
+
+	//		conneciton.StartBuffer()
+
+	//		for _, train := range activity.trains {
+	//			train.Draw(conneciton)
+	//		}
+
+	//		conneciton.FlushBuffer()
+
+	//		var non_dead_head []*Train
+
+	//		for _, train := range activity.trains {
+	//			if train.ShouldBeRemoved() {
+	//				train.RemoveFromPage(conneciton)
+	//			} else {
+	//				non_dead_head = append(non_dead_head, train)
+	//			}
+	//		}
+	//		activity.trains = non_dead_head
 	//	}
 	//}()
 
