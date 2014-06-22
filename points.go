@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"strings"
+
+	"github.com/kirillrdy/osm"
 )
 
 type Points []Point
@@ -26,4 +28,17 @@ func (points Points) ToSvgPath() string {
 	}
 	path := fmt.Sprintf("M %s", strings.Join(points_as_string, " L "))
 	return fmt.Sprintf(`<path d="%s" fill="none" stroke="blue"/>`, path)
+}
+
+func wayToPoints(way osm.Way) Points {
+
+	var points Points
+
+	for _, nd := range way.Nd {
+		node := nodesCache[nd.Ref]
+		point := Point{node.Lon, node.Lat}
+		points = append(points, point)
+
+	}
+	return points
 }
