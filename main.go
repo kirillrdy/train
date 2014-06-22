@@ -3,25 +3,30 @@ package main
 import "github.com/kirillrdy/nadeshiko"
 import "github.com/kirillrdy/osm"
 
-var melbourne = osm.LoadFromBz2()
+var melbourne = osm.LoadPackagedMelbourne()
 
-var nodes = map[uint64]osm.Node{}
-var ways = map[uint64]osm.Way{}
-var relations = map[uint64]osm.Relation{}
+var nodesCache = map[uint64]osm.Node{}
+var waysCache = map[uint64]osm.Way{}
+var relationsCache = map[uint64]osm.Relation{}
 
 func main() {
 
 	for _, node := range melbourne.Node {
-		nodes[node.Id] = node
+		nodesCache[node.Id] = node
 	}
 
 	for _, way := range melbourne.Way {
-		ways[way.Id] = way
+		waysCache[way.Id] = way
 	}
 
 	for _, relation := range melbourne.Relation {
-		relations[relation.Id] = relation
+		relationsCache[relation.Id] = relation
 	}
+
+	smallerOsm := osm.Osm{}
+	smallerOsm.Relation = TrainLinesRelations()
+	smallerOsm.Way = RelationsToWays(smallerOsm.Relation)
+	smallerOsm.Node = WaysToNodes(smallerOsm.Way)
 
 	routes := nadeshiko.Routes{}
 	routes.Activity("/", NewMainActivity())
