@@ -35,9 +35,11 @@ func wayToPoints(way osm.Way) Points {
 	var points Points
 
 	for _, nd := range way.Nd {
-		node := nodesCache[nd.Ref]
-		point := Point{node.Lon, node.Lat}
-		points = append(points, point)
+		node := melbourne.NodeById(nd.Ref)
+		if node != nil {
+			point := Point{node.Lon, node.Lat}
+			points = append(points, point)
+		}
 
 	}
 	return points

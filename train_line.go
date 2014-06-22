@@ -10,11 +10,13 @@ func trainLine(relationId uint64) TrainLine {
 
 	var points []Points
 
-	frankstone_line := relationsCache[relationId]
+	frankstone_line := melbourne.RelationById(relationId)
 
 	for _, member := range frankstone_line.Member {
-		way := waysCache[member.Ref]
-		points = append(points, wayToPoints(way))
+		way := melbourne.WayById(member.Ref)
+		if way != nil {
+			points = append(points, wayToPoints(*way))
+		}
 	}
 
 	return TrainLine{route: points}
@@ -40,13 +42,16 @@ func TrainLinesRelations() []osm.Relation {
 
 }
 
+//TODO relation members also sometimes contain nodes
 func RelationsToWays(relations []osm.Relation) []osm.Way {
 	var ways []osm.Way
 	for _, relation := range relations {
-		for _, member := range relation.Member {
-			ways = append(ways, waysCache[member.Ref])
+		for _, member := range relation.WayMembers() {
+			way := melbourne.WayById(member.Ref)
+			if way != nil {
+				ways = append(ways, *way)
+			}
 		}
-
 	}
 	return ways
 }
@@ -55,7 +60,11 @@ func WaysToNodes(ways []osm.Way) []osm.Node {
 	var nodes []osm.Node
 	for _, way := range ways {
 		for _, ng := range way.Nd {
-			nodes = append(nodes, nodesCache[ng.Ref])
+			node := melbourne.NodeById(ng.Ref)
+			if node != nil {
+				nodes = append(nodes, *node)
+			}
+
 		}
 	}
 	return nodes
