@@ -3,7 +3,7 @@ package main
 import "github.com/kirillrdy/nadeshiko"
 import "github.com/kirillrdy/osm"
 
-var melbourne = osm.LoadFromJson()
+var melbourne = osm.LoadFromBz2()
 
 var nodes = map[uint64]osm.Node{}
 var ways = map[uint64]osm.Way{}
