@@ -2,6 +2,7 @@ package model
 
 import (
 	"encoding/json"
+	"log"
 	"os"
 )
 
@@ -12,7 +13,7 @@ type City struct {
 func LoadCity(name string) (city City) {
 	file, err := os.Open(name)
 	if err != nil {
-		panic(err)
+		log.Fatalf("ERROR: %v \n", err)
 	}
 	defer file.Close()
 
