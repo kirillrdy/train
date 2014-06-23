@@ -1,4 +1,4 @@
-package main
+package model
 
 type Projection struct {
 	Original    Rectangle
@@ -7,8 +7,8 @@ type Projection struct {
 
 func (projection Projection) Translate(point Point) (tranformed Point) {
 	//TODO for future perhaps cache something
-	tranformed.x = (point.x-projection.Original.Min.x)/(projection.Original.Max.x-projection.Original.Min.x)*(projection.Destination.Max.x-projection.Destination.Min.x) + projection.Destination.Min.x
-	tranformed.y = (point.y-projection.Original.Min.y)/(projection.Original.Max.y-projection.Original.Min.y)*(projection.Destination.Max.y-projection.Destination.Min.y) + projection.Destination.Min.y
+	tranformed.X = (point.X-projection.Original.Min.X)/(projection.Original.Max.X-projection.Original.Min.X)*(projection.Destination.Max.X-projection.Destination.Min.X) + projection.Destination.Min.X
+	tranformed.Y = (point.Y-projection.Original.Min.Y)/(projection.Original.Max.Y-projection.Original.Min.Y)*(projection.Destination.Max.Y-projection.Destination.Min.Y) + projection.Destination.Min.Y
 
 	return tranformed
 }

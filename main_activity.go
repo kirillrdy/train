@@ -3,24 +3,24 @@ package main
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/kirillrdy/nadeshiko"
+	"github.com/kirillrdy/train/model"
 )
 
 type MainActivity struct {
-	trains     []*Train
-	points     []Point
-	projection Projection
+	trains     []*model.Train
+	projection model.Projection
+	city       model.City
 }
 
-func NewMainActivity() MainActivity {
+func NewMainActivity(city model.City) MainActivity {
 
-	scren := Rectangle{Point{0, 0}, Point{1600, 1200}}
-	fake_world := Rectangle{Point{144.5265, -37.6474}, Point{145.6032, -38.1427}}
-	projection := Projection{Original: fake_world, Destination: scren}
+	scren := model.Rectangle{model.Point{0, 0}, model.Point{1600, 1200}}
+	fake_world := model.Rectangle{model.Point{144.5265, -37.6474}, model.Point{145.6032, -38.1427}}
+	projection := model.Projection{Original: fake_world, Destination: scren}
 
-	return MainActivity{projection: projection}
+	return MainActivity{projection: projection, city: city}
 }
 
 func (activity MainActivity) AddMap(conneciton *nadeshiko.Connection) {
@@ -31,9 +31,9 @@ func (activity MainActivity) AddMap(conneciton *nadeshiko.Connection) {
 
 	var svg_paths []string
 
-	for _, line := range AllTrainLines() {
-		for _, points := range line.route {
-			svg_paths = append(svg_paths, points.Translate(activity.projection).ToSvgPath())
+	for _, line := range activity.city.TrainLines {
+		for _, section := range line.Sections {
+			svg_paths = append(svg_paths, section.Points.Translate(activity.projection).ToSvgPath())
 		}
 	}
 
@@ -85,17 +85,17 @@ func (activity MainActivity) Start(conneciton *nadeshiko.Connection) {
 
 }
 
-func (activity *MainActivity) addAtrain(path []Point, conneciton *nadeshiko.Connection) {
-	for i := 0; i < 100; i++ {
-		activity.addTrainToPath(path, conneciton)
-		time.Sleep(120 * time.Millisecond)
-	}
-}
-
-func (activity *MainActivity) addTrainToPath(path []Point, conneciton *nadeshiko.Connection) {
-
-	train := NewTrain(path)
-	train.AppendToPage(conneciton)
-	activity.trains = append(activity.trains, &train)
-
-}
+//func (activity *MainActivity) addAtrain(path []Point, conneciton *nadeshiko.Connection) {
+//	for i := 0; i < 100; i++ {
+//		activity.addTrainToPath(path, conneciton)
+//		time.Sleep(120 * time.Millisecond)
+//	}
+//}
+//
+//func (activity *MainActivity) addTrainToPath(path []Point, conneciton *nadeshiko.Connection) {
+//
+//	train := NewTrain(path)
+//	train.AppendToPage(conneciton)
+//	activity.trains = append(activity.trains, &train)
+//
+//}

@@ -1,4 +1,4 @@
-package main
+package model
 
 import (
 	"fmt"
@@ -73,6 +73,6 @@ func (train Train) At(point Point) bool {
 
 func (train Train) Draw(conneciton *nadeshiko.Connection) {
 	selector := "#" + train.Id
-	conneciton.JQuery(selector).SetCss("left", fmt.Sprintf("%fpx", train.Position.x+2))
-	conneciton.JQuery(selector).SetCss("top", fmt.Sprintf("%fpx", train.Position.y-17))
+	conneciton.JQuery(selector).SetCss("left", fmt.Sprintf("%fpx", train.Position.X+2))
+	conneciton.JQuery(selector).SetCss("top", fmt.Sprintf("%fpx", train.Position.Y-17))
 }

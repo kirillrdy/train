@@ -1,27 +1,27 @@
-package main
+package model
 
 import "math"
 
 type Point struct {
-	x, y float64
+	X, Y float64
 }
 
 func (point Point) Transform(direction float64, velocity float64) Point {
 	new_location := Point{}
-	new_location.x = (velocity * math.Cos(direction)) + point.x
-	new_location.y = (velocity * math.Sin(direction)) + point.y
+	new_location.X = (velocity * math.Cos(direction)) + point.X
+	new_location.Y = (velocity * math.Sin(direction)) + point.Y
 	return new_location
 }
 
 func (point Point) Floored() Point {
 	floored := Point{}
-	floored.x = math.Floor(point.x)
-	floored.y = math.Floor(point.y)
+	floored.X = math.Floor(point.X)
+	floored.Y = math.Floor(point.Y)
 	return floored
 }
 
 func (point Point) DistanceTo(second_point Point) float64 {
-	xdiff := point.x - second_point.x
-	ydiff := point.y - second_point.y
+	xdiff := point.X - second_point.X
+	ydiff := point.Y - second_point.Y
 	return math.Sqrt((xdiff * xdiff) + (ydiff * ydiff))
 }

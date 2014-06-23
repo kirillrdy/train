@@ -1,4 +1,4 @@
-package main
+package model
 
 import "math"
 
@@ -8,11 +8,11 @@ type Line struct {
 }
 
 func (line Line) Dy() float64 {
-	return line.End.y - line.Start.y
+	return line.End.Y - line.Start.Y
 }
 
 func (line Line) Dx() float64 {
-	return line.End.x - line.Start.x
+	return line.End.X - line.Start.X
 }
 
 //Only useful for printing
