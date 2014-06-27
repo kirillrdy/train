@@ -9,9 +9,10 @@ import (
 )
 
 type MainActivity struct {
-	trains     []*model.Train
-	projection model.Projection
-	city       model.City
+	trains      []*model.Train
+	projection  model.Projection
+	city        model.City
+	svg_element string
 }
 
 func NewMainActivity(city model.City) MainActivity {
@@ -20,26 +21,25 @@ func NewMainActivity(city model.City) MainActivity {
 	fake_world := model.Rectangle{model.Point{144.5265, -37.6474}, model.Point{145.6032, -38.1427}}
 	projection := model.Projection{Original: fake_world, Destination: scren}
 
-	return MainActivity{projection: projection, city: city}
-}
-
-func (activity MainActivity) AddMap(conneciton *nadeshiko.Connection) {
-
 	svg_element := `<svg width="1600" height="1200" >
 				%s
 			</svg> `
 
 	var svg_paths []string
 
-	for _, line := range activity.city.TrainLines {
+	for _, line := range city.TrainLines {
 		for _, section := range line.Sections {
-			svg_paths = append(svg_paths, section.Points.Translate(activity.projection).ToSvgPath())
+			svg_paths = append(svg_paths, section.Points.Translate(projection).ToSvgPath())
 		}
 	}
 
 	allPaths := fmt.Sprintf(svg_element, strings.Join(svg_paths, "\n"))
 
-	conneciton.JQuery("body").Append(allPaths)
+	return MainActivity{projection: projection, city: city, svg_element: allPaths}
+}
+
+func (activity MainActivity) AddMap(conneciton *nadeshiko.Connection) {
+	conneciton.JQuery("body").Append(activity.svg_element)
 }
 
 func (activity MainActivity) Start(conneciton *nadeshiko.Connection) {
