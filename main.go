@@ -7,7 +7,6 @@ import (
 
 func main() {
 
-	routes := nadeshiko.Routes{}
-	routes.Activity("/", NewMainActivity(model.LoadCity("melbourne.json")))
-	nadeshiko.Start(routes)
+	nadeshiko.StartActivity(NewMainActivity(model.LoadCity("melbourne.json")))
+	nadeshiko.Start()
 }
