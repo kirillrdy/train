@@ -1,12 +1,9 @@
 package main
 
-import (
-	"github.com/kirillrdy/nadeshiko"
-	"github.com/kirillrdy/train/model"
-)
+import "github.com/kirillrdy/nadeshiko"
 
 func main() {
-
-	nadeshiko.StartActivity(NewMainActivity(model.LoadCity("melbourne.json")))
+	setUp()
+	nadeshiko.Nadeshiko("/", handler)
 	nadeshiko.Start()
 }

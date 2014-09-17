@@ -8,20 +8,18 @@ import (
 	"github.com/kirillrdy/train/model"
 )
 
-type MainActivity struct {
-	trains      []*model.Train
-	projection  model.Projection
-	city        model.City
-	svg_element string
-}
+var projection model.Projection
+var city model.City
+var svg_element string
 
-func NewMainActivity(city model.City) MainActivity {
+func setUp() {
+	city := model.LoadCity("melbourne.json")
 
 	scren := model.Rectangle{model.Point{0, 0}, model.Point{1600, 1200}}
 	fake_world := model.Rectangle{model.Point{144.5265, -37.6474}, model.Point{145.6032, -38.1427}}
 	projection := model.Projection{Original: fake_world, Destination: scren}
 
-	svg_element := `<svg width="1600" height="1200" >
+	svg_element = `<svg width="1600" height="1200" >
 				%s
 			</svg> `
 
@@ -33,18 +31,17 @@ func NewMainActivity(city model.City) MainActivity {
 		}
 	}
 
-	allPaths := fmt.Sprintf(svg_element, strings.Join(svg_paths, "\n"))
+	svg_element = fmt.Sprintf(svg_element, strings.Join(svg_paths, "\n"))
 
-	return MainActivity{projection: projection, city: city, svg_element: allPaths}
 }
 
-func (activity MainActivity) AddMap(conneciton *nadeshiko.Connection) {
-	conneciton.JQuery("body").Append(activity.svg_element)
+func AddMap(document nadeshiko.Document) {
+	document.JQuery("body").Append(svg_element)
 }
 
-func (activity MainActivity) Start(conneciton *nadeshiko.Connection) {
+func handler(document nadeshiko.Document) {
 
-	activity.AddMap(conneciton)
+	AddMap(document)
 
 	//button := `<input type="button" id="add" value="Add Train">`
 	//conneciton.JQuery("body").Append(button)
