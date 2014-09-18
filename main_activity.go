@@ -35,11 +35,11 @@ func setUp() {
 
 }
 
-func AddMap(document nadeshiko.Document) {
+func AddMap(document *nadeshiko.Document) {
 	document.JQuery("body").Append(svg_element)
 }
 
-func handler(document nadeshiko.Document) {
+func handler(document *nadeshiko.Document) {
 
 	AddMap(document)
 
