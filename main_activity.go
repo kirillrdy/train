@@ -5,12 +5,14 @@ import (
 	"strings"
 
 	"github.com/kirillrdy/nadeshiko"
+	"github.com/kirillrdy/nadeshiko/html"
 	"github.com/kirillrdy/train/model"
+	"github.com/sparkymat/webdsl/css"
 )
 
 var projection model.Projection
 var city model.City
-var svg_element string
+var svg_element html.Node
 
 func setUp() {
 	city := model.LoadCity("melbourne.json")
@@ -19,10 +21,7 @@ func setUp() {
 	fake_world := model.Rectangle{model.Point{144.5265, -37.6474}, model.Point{145.6032, -38.1427}}
 	projection := model.Projection{Original: fake_world, Destination: scren}
 
-	svg_element = `<svg width="1600" height="1200" >
-				%s
-			</svg> `
-
+	svg_element = html.Svg().Height(1200).Width(1600)
 	var svg_paths []string
 
 	for _, line := range city.TrainLines {
@@ -31,12 +30,12 @@ func setUp() {
 		}
 	}
 
-	svg_element = fmt.Sprintf(svg_element, strings.Join(svg_paths, "\n"))
+	svg_element = svg_element.Text(fmt.Sprintf(strings.Join(svg_paths, "\n")))
 
 }
 
 func AddMap(document *nadeshiko.Document) {
-	document.JQuery("body").Append(svg_element)
+	document.JQuery(css.Body).Append(svg_element)
 }
 
 func handler(document *nadeshiko.Document) {

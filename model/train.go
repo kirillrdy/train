@@ -5,6 +5,8 @@ import (
 	"math/rand"
 
 	"github.com/kirillrdy/nadeshiko"
+	"github.com/kirillrdy/nadeshiko/html"
+	"github.com/sparkymat/webdsl/css"
 )
 
 type Train struct {
@@ -22,17 +24,17 @@ func NewTrain(path []Point) Train {
 		Position:          path[0]}
 }
 
-func (train Train) CssSelector() string {
-	return "#" + train.Id
+func (train Train) Selector() string {
+	return css.Id(train.Id).Selector()
 }
 
 func (train Train) AppendToPage(document nadeshiko.Document) {
-	document.JQuery("body").Append(fmt.Sprintf("<p id='%s'>O</p>", train.Id))
-	document.JQuery(train.CssSelector()).SetCss("position", "absolute")
+	document.JQuery(css.Body).Append(html.P().Id(train.Id).Text(")"))
+	document.JQuery(train).SetCss("position", "absolute")
 }
 
 func (train Train) RemoveFromPage(document nadeshiko.Document) {
-	document.JQuery(train.CssSelector()).Remove()
+	document.JQuery(train).Remove()
 }
 
 func (train *Train) Step(point Point) {
@@ -72,7 +74,6 @@ func (train Train) At(point Point) bool {
 }
 
 func (train Train) Draw(document nadeshiko.Document) {
-	selector := "#" + train.Id
-	document.JQuery(selector).SetCss("left", fmt.Sprintf("%fpx", train.Position.X+2))
-	document.JQuery(selector).SetCss("top", fmt.Sprintf("%fpx", train.Position.Y-17))
+	document.JQuery(train).SetCss("left", fmt.Sprintf("%fpx", train.Position.X+2))
+	document.JQuery(train).SetCss("top", fmt.Sprintf("%fpx", train.Position.Y-17))
 }
