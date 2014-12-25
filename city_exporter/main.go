@@ -1,6 +1,10 @@
 package main
 
 import (
+	"fmt"
+	"log"
+	"time"
+
 	"github.com/kirillrdy/osm"
 	"github.com/kirillrdy/train/model"
 )
@@ -66,11 +70,23 @@ func AllTrainLines(osm osm.Osm) (lines model.TrainLines) {
 }
 
 func main() {
+	log.Print("Loading OSM data for melbourne")
+
+	go func() {
+		ticker := time.Tick(time.Second)
+		for range ticker {
+			fmt.Print(".")
+		}
+	}()
+
 	melbourneOsm := osm.LoadPackagedMelbourne()
+	log.Print("Building Index")
 	melbourneOsm.BuildIndex()
 	melbourne := model.City{}
 
+	log.Print("Extracting train lines")
 	trainLines := AllTrainLines(*melbourneOsm)
 	melbourne.TrainLines = trainLines
+	log.Print("Saving melbourne.json")
 	melbourne.Save("melbourne.json")
 }
