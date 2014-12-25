@@ -1,17 +1,16 @@
 package main
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/kirillrdy/nadeshiko"
+	"github.com/kirillrdy/nadeshiko/html"
+	"github.com/sparkymat/webdsl/css"
 )
 
-type MainActivity struct {
-	trains []*Train
-}
+var trains []*Train
 
-func (activity MainActivity) Start(conneciton *nadeshiko.Connection) {
+func MainActivity(document *nadeshiko.Document) {
 
 	path := []Point{
 		Point{0, 0},
@@ -28,46 +27,48 @@ func (activity MainActivity) Start(conneciton *nadeshiko.Connection) {
 		Point{400, 150},
 	}
 
-	data := `<svg height="480" width="640">
-			<path d="%s" fill="none" stroke="blue"/>
-			</svg> `
+	svg := html.Svg().Height(480).Width(640).Children(
+		html.Path().Attribute("fill", "none").Attribute("stroke", "blue").Attribute("d", Points(path).pointsSvgToPath()),
+	)
 
-	conneciton.JQuery("body").Append(fmt.Sprintf(data, Points(path).pointsSvgToPath()))
+	document.JQuery(css.Body).Append(svg)
 
-	button := `<input type="button" id="add" value="Add Train">`
-	conneciton.JQuery("body").Append(button)
+	buttonId := css.Id("add")
 
-	conneciton.JQuery("#add").Click(func() {
+	button := html.Input().Type("button").Id(buttonId).Value("Add Train")
+	document.JQuery(css.Body).Append(button)
+
+	document.JQuery(buttonId).Click(func() {
 		//activity.addTrainToPath(path, conneciton)
-		activity.addAtrain(path, conneciton)
+		addAtrain(path, document)
 	})
 
 	go func() {
 		for {
 			time.Sleep(10 * time.Millisecond)
-			for _, train := range activity.trains {
+			for _, train := range trains {
 				train.OneFrame()
 			}
 
-			conneciton.StartBuffer()
+			document.StartBuffer()
 
-			for _, train := range activity.trains {
-				train.Draw(conneciton)
+			for _, train := range trains {
+				train.Draw(document)
 			}
 
-			conneciton.FlushBuffer()
+			document.FlushBuffer()
 
 			var non_dead_head []*Train
 
-			for _, train := range activity.trains {
+			for _, train := range trains {
 				if train.ShouldBeRemoved() {
 					//TODO also remove from trains
-					train.RemoveFromPage(conneciton)
+					train.RemoveFromPage(document)
 				} else {
 					non_dead_head = append(non_dead_head, train)
 				}
 			}
-			activity.trains = non_dead_head
+			trains = non_dead_head
 		}
 	}()
 
@@ -80,17 +81,17 @@ func (activity MainActivity) Start(conneciton *nadeshiko.Connection) {
 
 }
 
-func (activity *MainActivity) addAtrain(path []Point, conneciton *nadeshiko.Connection) {
+func addAtrain(path []Point, document *nadeshiko.Document) {
 	for i := 0; i < 100; i++ {
-		activity.addTrainToPath(path, conneciton)
+		addTrainToPath(path, document)
 		time.Sleep(120 * time.Millisecond)
 	}
 }
 
-func (activity *MainActivity) addTrainToPath(path []Point, conneciton *nadeshiko.Connection) {
+func addTrainToPath(path []Point, document *nadeshiko.Document) {
 
 	train := NewTrain(path)
-	train.AppendToPage(conneciton)
-	activity.trains = append(activity.trains, &train)
+	train.AppendToPage(document)
+	trains = append(trains, &train)
 
 }

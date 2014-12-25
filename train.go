@@ -5,10 +5,12 @@ import (
 	"math/rand"
 
 	"github.com/kirillrdy/nadeshiko"
+	"github.com/kirillrdy/nadeshiko/html"
+	"github.com/sparkymat/webdsl/css"
 )
 
 type Train struct {
-	Id                string
+	Id                css.Id
 	Position          Point
 	currentPointIndex int
 	path              []Point
@@ -16,23 +18,24 @@ type Train struct {
 
 func NewTrain(path []Point) Train {
 	random := rand.Int63()
-	return Train{Id: fmt.Sprintf("%d", random),
+	return Train{Id: css.Id(fmt.Sprintf("%d", random)),
 		path:              path,
 		currentPointIndex: 1,
 		Position:          path[0]}
 }
 
-func (train Train) CssSelector() string {
-	return "#" + train.Id
+func (train Train) Selector() string {
+	return train.Id.Selector()
 }
 
-func (train Train) AppendToPage(conneciton *nadeshiko.Connection) {
-	conneciton.JQuery("body").Append(fmt.Sprintf("<p id='%s'>O</p>", train.Id))
-	conneciton.JQuery(train.CssSelector()).SetCss("position", "absolute")
+func (train Train) AppendToPage(document *nadeshiko.Document) {
+	p := html.P().Id(train.Id).Text("O")
+	document.JQuery(css.Body).Append(p)
+	document.JQuery(train).SetCss("position", "absolute")
 }
 
-func (train Train) RemoveFromPage(conneciton *nadeshiko.Connection) {
-	conneciton.JQuery(train.CssSelector()).Remove()
+func (train Train) RemoveFromPage(document *nadeshiko.Document) {
+	document.JQuery(train).Remove()
 }
 
 func (train *Train) Step(point Point) {
@@ -71,8 +74,7 @@ func (train Train) At(point Point) bool {
 	return val
 }
 
-func (train Train) Draw(conneciton *nadeshiko.Connection) {
-	selector := "#" + train.Id
-	conneciton.JQuery(selector).SetCss("left", fmt.Sprintf("%fpx", train.Position.x+2))
-	conneciton.JQuery(selector).SetCss("top", fmt.Sprintf("%fpx", train.Position.y-17))
+func (train Train) Draw(document *nadeshiko.Document) {
+	document.JQuery(train).SetCss("left", fmt.Sprintf("%fpx", train.Position.x+2))
+	document.JQuery(train).SetCss("top", fmt.Sprintf("%fpx", train.Position.y-17))
 }
