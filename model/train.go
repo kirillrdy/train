@@ -10,7 +10,7 @@ import (
 )
 
 type Train struct {
-	Id                string
+	Id                css.Id
 	Position          Point
 	currentPointIndex int
 	path              []Point
@@ -18,7 +18,7 @@ type Train struct {
 
 func NewTrain(path []Point) Train {
 	random := rand.Int63()
-	return Train{Id: fmt.Sprintf("%d", random),
+	return Train{Id: css.Id(fmt.Sprintf("%d", random)),
 		path:              path,
 		currentPointIndex: 1,
 		Position:          path[0]}
