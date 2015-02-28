@@ -30,7 +30,7 @@ func setUp() {
 		}
 	}
 
-	svg_element = svg_element.Text(fmt.Sprintf(strings.Join(svg_paths, "\n")))
+	svg_element = svg_element.TextUnsafe(fmt.Sprintf(strings.Join(svg_paths, "\n")))
 
 }
 

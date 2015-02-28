@@ -30,7 +30,7 @@ func (train Train) Selector() string {
 
 func (train Train) AppendToPage(document nadeshiko.Document) {
 	document.JQuery(css.Body).Append(html.P().Id(train.Id).Text(")"))
-	document.JQuery(train).SetCss("position", "absolute")
+	document.JQuery(train).SetCSS("position", "absolute")
 }
 
 func (train Train) RemoveFromPage(document nadeshiko.Document) {
@@ -74,6 +74,6 @@ func (train Train) At(point Point) bool {
 }
 
 func (train Train) Draw(document nadeshiko.Document) {
-	document.JQuery(train).SetCss("left", fmt.Sprintf("%fpx", train.Position.X+2))
-	document.JQuery(train).SetCss("top", fmt.Sprintf("%fpx", train.Position.Y-17))
+	document.JQuery(train).SetCSS("left", fmt.Sprintf("%fpx", train.Position.X+2))
+	document.JQuery(train).SetCSS("top", fmt.Sprintf("%fpx", train.Position.Y-17))
 }
