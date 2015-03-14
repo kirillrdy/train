@@ -1,9 +1,12 @@
 package main
 
-import "github.com/kirillrdy/nadeshiko"
+import (
+	"github.com/kirillrdy/nadeshiko"
+	"github.com/kirillrdy/train/lib"
+)
 
 func main() {
-	setUp()
-	nadeshiko.Nadeshiko("/", handler)
+	lib.SetUp()
+	nadeshiko.Nadeshiko("/", lib.Handler)
 	nadeshiko.Start()
 }

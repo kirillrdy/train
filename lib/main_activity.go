@@ -1,4 +1,4 @@
-package main
+package lib
 
 import (
 	"fmt"
@@ -14,7 +14,7 @@ var projection model.Projection
 var city model.City
 var svg_element html.Node
 
-func setUp() {
+func SetUp() {
 	city := model.LoadCity("melbourne.json")
 
 	scren := model.Rectangle{model.Point{0, 0}, model.Point{1600, 1200}}
@@ -38,7 +38,7 @@ func AddMap(document *nadeshiko.Document) {
 	document.JQuery(css.Body).Append(svg_element)
 }
 
-func handler(document *nadeshiko.Document) {
+func Handler(document *nadeshiko.Document) {
 
 	AddMap(document)
 
