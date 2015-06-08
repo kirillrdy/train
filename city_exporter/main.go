@@ -9,7 +9,7 @@ import (
 	"github.com/kirillrdy/train/model"
 )
 
-func wayToSection(osm *osm.Osm, index *osm.OsmIndex, way osm.Way) (section model.Section) {
+func wayToSection(osm *osm.Osm, index *osm.Index, way osm.Way) (section model.Section) {
 
 	var points model.Points
 
@@ -26,7 +26,7 @@ func wayToSection(osm *osm.Osm, index *osm.OsmIndex, way osm.Way) (section model
 	return section
 }
 
-func osmRelationToTrainLine(osm *osm.Osm, index *osm.OsmIndex, relation osm.Relation) (trainLine model.TrainLine) {
+func osmRelationToTrainLine(osm *osm.Osm, index *osm.Index, relation osm.Relation) (trainLine model.TrainLine) {
 
 	var sections model.Sections
 
