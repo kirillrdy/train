@@ -9,12 +9,12 @@ import (
 	"github.com/kirillrdy/train/model"
 )
 
-func wayToSection(osm osm.Osm, way osm.Way) (section model.Section) {
+func wayToSection(osm *osm.Osm, index *osm.OsmIndex, way osm.Way) (section model.Section) {
 
 	var points model.Points
 
 	for _, nd := range way.Nd {
-		node := osm.NodeById(nd.Ref)
+		node := index.NodeById(nd.Ref)
 		if node != nil {
 			point := model.Point{node.Lon, node.Lat}
 			points = append(points, point)
@@ -26,14 +26,14 @@ func wayToSection(osm osm.Osm, way osm.Way) (section model.Section) {
 	return section
 }
 
-func osmRelationToTrainLine(osm osm.Osm, relation osm.Relation) (trainLine model.TrainLine) {
+func osmRelationToTrainLine(osm *osm.Osm, index *osm.OsmIndex, relation osm.Relation) (trainLine model.TrainLine) {
 
 	var sections model.Sections
 
 	for _, member := range relation.WayMembers() {
-		way := osm.WayById(member.Ref)
+		way := index.WayById(member.Ref)
 		if way != nil {
-			sections = append(sections, wayToSection(osm, *way))
+			sections = append(sections, wayToSection(osm, index, *way))
 		}
 	}
 
@@ -46,13 +46,14 @@ func osmRelationToTrainLine(osm osm.Osm, relation osm.Relation) (trainLine model
 //	return trainLine(frankstone_line_id)
 //}
 
-func TrainLinesRelations(osm osm.Osm) (results []osm.Relation) {
-	for _, relation := range osm.Relation {
+func trainLinesRelations(osm *osm.Osm) (results []osm.Relation) {
+	for i := range osm.Relation {
+		relation := osm.Relation[i]
 		if relation.IsTrainRoute() {
 
 			//TODO This line breaks my projections, needs fixing
 			if relation.Id != 905345 {
-				results = append(results, relation)
+				results = append(results, *relation)
 			}
 		}
 	}
@@ -60,10 +61,11 @@ func TrainLinesRelations(osm osm.Osm) (results []osm.Relation) {
 
 }
 
-func AllTrainLines(osm osm.Osm) (lines model.TrainLines) {
+func AllTrainLines(osm *osm.Osm) (lines model.TrainLines) {
+	index := osm.BuildIndex()
 
-	for _, relation := range TrainLinesRelations(osm) {
-		lines = append(lines, osmRelationToTrainLine(osm, relation))
+	for _, relation := range trainLinesRelations(osm) {
+		lines = append(lines, osmRelationToTrainLine(osm, &index, relation))
 	}
 
 	return lines
@@ -81,11 +83,11 @@ func main() {
 
 	melbourneOsm := osm.LoadPackagedMelbourne()
 	log.Print("Building Index")
-	melbourneOsm.BuildIndex()
+
 	melbourne := model.City{}
 
 	log.Print("Extracting train lines")
-	trainLines := AllTrainLines(*melbourneOsm)
+	trainLines := AllTrainLines(melbourneOsm)
 	melbourne.TrainLines = trainLines
 	log.Print("Saving melbourne.json")
 	melbourne.Save("melbourne.json")
