@@ -9,6 +9,8 @@ import (
 	"github.com/sparkymat/webdsl/css"
 )
 
+const VELOCITY = 1
+
 type Train struct {
 	Id                css.Id
 	Position          Point

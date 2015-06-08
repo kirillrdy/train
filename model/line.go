@@ -28,5 +28,3 @@ func (line Line) AngleRadians() float64 {
 	theta := math.Atan2(line.Dy(), line.Dx())
 	return theta
 }
-
-const VELOCITY = 1
