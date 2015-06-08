@@ -52,9 +52,9 @@ func trainLinesRelations(osm *osm.Osm) (results []osm.Relation) {
 		if relation.IsTrainRoute() {
 
 			//TODO This line breaks my projections, needs fixing
-			if relation.Id != 905345 {
-				results = append(results, *relation)
-			}
+			//if relation.Id != 905345 {
+			results = append(results, *relation)
+			//}
 		}
 	}
 	return results
