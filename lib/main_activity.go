@@ -1,46 +1,50 @@
 package lib
 
 import (
-	"fmt"
-	"strings"
+	"log"
+	"time"
 
 	"github.com/kirillrdy/nadeshiko"
 	"github.com/kirillrdy/nadeshiko/html"
+	"github.com/kirillrdy/train/melbourne"
 	"github.com/kirillrdy/train/model"
 	"github.com/sparkymat/webdsl/css"
 )
 
 var projection model.Projection
-var city model.City
-var svg_element html.Node
 
-func SetUp() {
-	city := model.LoadCity("melbourne.json")
+func RenderMap(document *nadeshiko.Document, projection model.Projection) {
+	now := time.Now()
+	svg := melbourne.RailMap(projection)
+	log.Printf("svg gen took %s", time.Since(now))
 
-	scren := model.Rectangle{model.Point{0, 0}, model.Point{1600, 1200}}
-	fake_world := model.Rectangle{model.Point{144.5265, -37.6474}, model.Point{145.6032, -38.1427}}
-	projection := model.Projection{Original: fake_world, Destination: scren}
+	now = time.Now()
+	document.JQuery(css.Body).Append(svg)
+	log.Printf("append took %s", time.Since(now))
 
-	svg_element = html.Svg().Height(1200).Width(1600)
-	var svg_paths []string
-
-	for _, line := range city.TrainLines {
-		for _, section := range line.Sections {
-			svg_paths = append(svg_paths, section.Points.Translate(projection).ToSvgPath())
-		}
-	}
-
-	svg_element = svg_element.TextUnsafe(fmt.Sprintf(strings.Join(svg_paths, "\n")))
-
-}
-
-func AddMap(document *nadeshiko.Document) {
-	document.JQuery(css.Body).Append(svg_element)
+	log.Printf("size %d", len(svg.String()))
 }
 
 func Handler(document *nadeshiko.Document) {
 
-	AddMap(document)
+	screen := model.Screen{Width: 507, Height: 324}
+	projection := model.Projection{Original: melbourne.Boundaries, Destination: screen.ToRectangle()}
+
+	RenderMap(document, projection)
+
+	var zoomInButton css.Id = "zoom-in-button"
+	document.JQuery(css.Body).Append(html.Button().Id(zoomInButton).Text("Zoom in"))
+
+	document.JQuery(zoomInButton).Click(func() {
+		projection.Original.Max.X -= 0.1
+		projection.Original.Max.X -= 0.1
+		projection.Original.Min.X += 0.1
+		projection.Original.Min.X += 0.1
+		RenderMap(document, projection)
+	})
+
+	go func() {
+	}()
 
 	//button := `<input type="button" id="add" value="Add Train">`
 	//conneciton.JQuery("body").Append(button)
