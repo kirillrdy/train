@@ -6,7 +6,6 @@ import (
 )
 
 func main() {
-	lib.SetUp()
 	nadeshiko.Nadeshiko("/", lib.Handler)
 	nadeshiko.Start()
 }
