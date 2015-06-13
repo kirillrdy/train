@@ -1,16 +1,29 @@
 package model
 
+import "log"
+
 type Projection struct {
 	Original    Rectangle
 	Destination Rectangle
 }
 
 func (projection Projection) Translate(point Point) (tranformed Point) {
-	//TODO for future perhaps cache something
 	tranformed.X = (point.X-projection.Original.Min.X)/(projection.Original.Max.X-projection.Original.Min.X)*(projection.Destination.Max.X-projection.Destination.Min.X) + projection.Destination.Min.X
 	tranformed.Y = (point.Y-projection.Original.Min.Y)/(projection.Original.Max.Y-projection.Original.Min.Y)*(projection.Destination.Max.Y-projection.Destination.Min.Y) + projection.Destination.Min.Y
 
 	return tranformed
+}
+
+func (projection Projection) Pan(x, y float64) Projection {
+	xratio := (projection.Original.Max.X - projection.Original.Min.X) / (projection.Destination.Max.X - projection.Destination.Min.X)
+	projection.Original.Max.X += x * xratio
+	projection.Original.Min.X += x * xratio
+
+	yratio := (projection.Original.Max.Y - projection.Original.Min.Y) / (projection.Destination.Max.Y - projection.Destination.Min.Y)
+	projection.Original.Max.Y += y * yratio
+	projection.Original.Min.Y += y * yratio
+	log.Printf("xratio yration %v %v", xratio, yratio)
+	return projection
 }
 
 //func main() {

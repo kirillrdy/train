@@ -1,13 +1,13 @@
 package melbourne
 
 import (
-	"fmt"
 	"log"
-	"strings"
 	"time"
 
 	"github.com/kirillrdy/nadeshiko/html"
+
 	"github.com/kirillrdy/train/model"
+	"github.com/sparkymat/webdsl/css"
 )
 
 var city model.City
@@ -24,9 +24,9 @@ func init() {
 	log.Printf("Loading melbourne.json took %s", time.Since(now))
 }
 
-func RailMap(projection model.Projection) html.Node {
+func RailMap(svgId css.Id, projection model.Projection) []html.Node {
 
-	var svg_paths []string
+	var svg_paths []html.Node
 
 	for _, line := range city.TrainLines {
 		for _, section := range line.Sections {
@@ -34,7 +34,5 @@ func RailMap(projection model.Projection) html.Node {
 		}
 	}
 
-	svg_element := html.Svg().WidthFloat(projection.Destination.Max.X).HeightFloat(projection.Destination.Max.Y)
-	svg_element = svg_element.TextUnsafe(fmt.Sprintf(strings.Join(svg_paths, "\n")))
-	return svg_element
+	return svg_paths
 }

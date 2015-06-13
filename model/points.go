@@ -3,6 +3,8 @@ package model
 import (
 	"fmt"
 	"strings"
+
+	"github.com/kirillrdy/nadeshiko/html"
 )
 
 type Points []Point
@@ -15,15 +17,12 @@ func (points Points) Translate(projection Projection) Points {
 	return points_translated
 }
 
-func (points Points) ToSvgPath() string {
-	if len(points) == 0 {
-		return ""
-	}
-
+func (points Points) ToSvgPath() html.Node {
 	var points_as_string []string
 	for _, point := range points {
 		points_as_string = append(points_as_string, fmt.Sprintf("%f %f", point.X, point.Y))
 	}
 	path := fmt.Sprintf("M %s", strings.Join(points_as_string, " L "))
-	return fmt.Sprintf(`<path d="%s" fill="none" stroke="blue"/>`, path)
+
+	return html.Path().D(path).Fill("none").Stroke("blue")
 }

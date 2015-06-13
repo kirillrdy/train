@@ -13,22 +13,34 @@ import (
 
 var projection model.Projection
 
+var svgMap css.Id = "svg-map"
+
 func RenderMap(document *nadeshiko.Document, projection model.Projection) {
 	now := time.Now()
-	svg := melbourne.RailMap(projection)
+	svgPaths := melbourne.RailMap(svgMap, projection)
 	log.Printf("svg gen took %s", time.Since(now))
 
 	now = time.Now()
-	document.JQuery(css.Body).Append(svg)
+	document.JQuery(svgMap).Empty()
+	for _, path := range svgPaths[0:1] {
+		document.JQuery(svgMap).HTML(path)
+	}
+
 	log.Printf("append took %s", time.Since(now))
 
-	log.Printf("size %d", len(svg.String()))
+	log.Printf("size %d", len(svgPaths))
 }
 
 func Handler(document *nadeshiko.Document) {
 
 	screen := model.Screen{Width: 507, Height: 324}
+
 	projection := model.Projection{Original: melbourne.Boundaries, Destination: screen.ToRectangle()}
+
+	div := html.Div().Id(svgMap)
+
+	svg_element := html.Svg().Id(svgMap).WidthFloat(projection.Destination.Max.X).HeightFloat(projection.Destination.Max.Y)
+	document.JQuery(css.Body).Append(svg_element)
 
 	RenderMap(document, projection)
 
@@ -36,10 +48,7 @@ func Handler(document *nadeshiko.Document) {
 	document.JQuery(css.Body).Append(html.Button().Id(zoomInButton).Text("Zoom in"))
 
 	document.JQuery(zoomInButton).Click(func() {
-		projection.Original.Max.X -= 0.1
-		projection.Original.Max.X -= 0.1
-		projection.Original.Min.X += 0.1
-		projection.Original.Min.X += 0.1
+		projection = projection.Pan(1, 1)
 		RenderMap(document, projection)
 	})
 
