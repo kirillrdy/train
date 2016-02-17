@@ -1,4 +1,5 @@
 * Todo
+- [ ] do city_exporter part of main
 - [ ] remove rail crossings
 - [ ] remove VLINE
 - [ ] add zooming and panning
