@@ -14,22 +14,24 @@ var projection model.Projection
 var city model.City
 var svgElement html.Node
 
+//SetUp loads all required data and sets whatever needed
+//TODO possibly move to init ?
 func SetUp() {
 	city := model.LoadCity("melbourne.json")
 
-	scren := model.Rectangle{model.Point{0, 0}, model.Point{1600, 1200}}
-	fake_world := model.Rectangle{model.Point{144.5265, -37.6474}, model.Point{145.6032, -38.1427}}
-	projection := model.Projection{Original: fake_world, Destination: scren}
+	screen := model.Rectangle{Min: model.Point{X: 0, Y: 0}, Max: model.Point{X: 1600, Y: 1200}}
+	melbourneBoundary := model.Rectangle{Min: model.Point{X: 144.5265, Y: -37.6474}, Max: model.Point{X: 145.6032, Y: -38.1427}}
+	projection := model.Projection{Original: melbourneBoundary, Destination: screen}
 
-	var svg_paths []string
+	var svgPaths []string
 
 	for _, line := range city.TrainLines {
 		for _, section := range line.Sections {
-			svg_paths = append(svg_paths, section.Points.Translate(projection).ToSvgPath())
+			svgPaths = append(svgPaths, section.Points.Translate(projection).ToSvgPath())
 		}
 	}
 
-	svgElement = html.Svg().Height(1200).Width(1600).TextUnsafe(fmt.Sprintf(strings.Join(svg_paths, "\n")))
+	svgElement = html.Svg().Height(1200).Width(1600).TextUnsafe(fmt.Sprintf(strings.Join(svgPaths, "\n")))
 }
 
 func AddMap(document *nadeshiko.Document) {
