@@ -16,7 +16,7 @@ func wayToSection(osm *osm.Osm, index *osm.Index, way osm.Way) (section model.Se
 	for _, nd := range way.Nd {
 		node := index.NodeById(nd.Ref)
 		if node != nil {
-			point := model.Point{node.Lon, node.Lat}
+			point := model.Point{X: node.Lon, Y: node.Lat}
 			points = append(points, point)
 		}
 
