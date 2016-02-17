@@ -12,7 +12,7 @@ import (
 
 var projection model.Projection
 var city model.City
-var svg_element html.Node
+var svgElement html.Node
 
 func SetUp() {
 	city := model.LoadCity("melbourne.json")
@@ -21,7 +21,6 @@ func SetUp() {
 	fake_world := model.Rectangle{model.Point{144.5265, -37.6474}, model.Point{145.6032, -38.1427}}
 	projection := model.Projection{Original: fake_world, Destination: scren}
 
-	svg_element = html.Svg().Height(1200).Width(1600)
 	var svg_paths []string
 
 	for _, line := range city.TrainLines {
@@ -30,12 +29,11 @@ func SetUp() {
 		}
 	}
 
-	svg_element = svg_element.TextUnsafe(fmt.Sprintf(strings.Join(svg_paths, "\n")))
-
+	svgElement = html.Svg().Height(1200).Width(1600).TextUnsafe(fmt.Sprintf(strings.Join(svg_paths, "\n")))
 }
 
 func AddMap(document *nadeshiko.Document) {
-	document.JQuery(css.Body).Append(svg_element)
+	document.JQuery(css.Body).Append(svgElement)
 }
 
 func Handler(document *nadeshiko.Document) {
